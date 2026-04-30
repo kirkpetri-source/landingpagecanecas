@@ -1004,7 +1004,7 @@ p  { text-wrap: pretty; color: var(--text-soft); }
 }
 .footer__grid {
   display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr 1fr;
+  grid-template-columns: 1.5fr 1fr 1fr;
   gap: 32px;
   align-items: start;
 }
@@ -2542,31 +2542,25 @@ function Footer({ wppLink }) {
           </div>
 
           <div className="footer__col reveal">
-            <h5>Navegação</h5>
-            <a href="#argumentos">Por que personalizar</a>
-            <a href="#galeria">Galeria</a>
+            <h5>Explorar</h5>
+            <a href="#galeria">Galeria de Inspirações</a>
             <a href="#processo">Como funciona</a>
-            <a href="#faq">FAQ</a>
-          </div>
-
-          <div className="footer__col reveal">
-            <h5>Personalize</h5>
-            <a href={wppLink} target="_blank" rel="noopener">Para Dia das Mães</a>
-            <a href={wppLink} target="_blank" rel="noopener">Para casal</a>
-            <a href={wppLink} target="_blank" rel="noopener">Para empresas</a>
-            <a href={wppLink} target="_blank" rel="noopener">Lembrancinhas</a>
-          </div>
-
-          <div className="footer__col reveal">
-            <h5>Contato</h5>
-            <a href={wppLink} target="_blank" rel="noopener">WhatsApp +55 64 9 9911-6361</a>
-            <a href="mailto:contato@liontech.com">contato@liontech.com</a>
+            <a href="#faq">Dúvidas Frequentes (FAQ)</a>
             <a href="#top">Voltar ao topo ↑</a>
+          </div>
+
+          <div className="footer__col reveal">
+            <h5>Contato & Pedidos</h5>
+            <a href={wppLink} target="_blank" rel="noopener">Para Dia das Mães</a>
+            <a href={wppLink} target="_blank" rel="noopener">Brindes Corporativos</a>
+            <a href={wppLink} target="_blank" rel="noopener" style={{ marginTop: 12, fontWeight: 600, color: 'var(--accent-2)' }}>
+              WhatsApp +55 64 9 9911-6361
+            </a>
           </div>
         </div>
 
         <div className="footer__bottom">
-          <span>© 2026 Lion Tech — Canecas Personalizadas. Feito com ♥ no Brasil.</span>
+          <span>© 2026 Lion Tech — Canecas Personalizadas.</span>
           <span>Eternize momentos. Presenteie histórias.</span>
         </div>
       </div>
