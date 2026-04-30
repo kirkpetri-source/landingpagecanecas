@@ -492,17 +492,13 @@ p  { text-wrap: pretty; color: var(--text-soft); }
 
 .hero__visual {
   position: relative;
-  perspective: 1200px;
 }
 .hero__card {
   position: relative;
-  /* Fundo transparente conforme solicitado */
   background: transparent;
   padding: 0;
   border: none;
   box-shadow: none;
-  transform-style: preserve-3d;
-  transition: transform .15s ease;
 }
 .hero__card .ribbon {
   position:absolute; top: 18px; left: 18px;
@@ -1552,25 +1548,6 @@ const heroStyles = {};
 
 function Hero({ wppLink }) {
   const cardRef = React.useRef(null);
-
-  // efeito 3D no mouse
-  React.useEffect(() => {
-    const el = cardRef.current;
-    if (!el) return;
-    const handle = (e) => {
-      const r = el.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width - .5;
-      const y = (e.clientY - r.top) / r.height - .5;
-      el.style.transform = `rotateY(${x * 9}deg) rotateX(${-y * 9}deg) translateZ(0)`;
-    };
-    const reset = () => { el.style.transform = 'rotateY(0deg) rotateX(0deg)'; };
-    el.addEventListener('mousemove', handle);
-    el.addEventListener('mouseleave', reset);
-    return () => {
-      el.removeEventListener('mousemove', handle);
-      el.removeEventListener('mouseleave', reset);
-    };
-  }, []);
 
   return (
     <section className="hero">
