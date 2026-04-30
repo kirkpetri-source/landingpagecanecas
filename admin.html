@@ -449,51 +449,38 @@ body {
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
 <script>
-/* ===== IndexedDB Storage ===== */
+/* ===== Firebase Storage & Firestore ===== */
+const firebaseConfig = {
+  apiKey: "AIzaSyCtAKK5CJ0PC2ClKmEf4GY-GXlh4f838Jw",
+  authDomain: "landingpagecanecas.firebaseapp.com",
+  projectId: "landingpagecanecas",
+  storageBucket: "landingpagecanecas.firebasestorage.app",
+  messagingSenderId: "518789402709",
+  appId: "1:518789402709:web:3aa2480f0c5f81bace84dc"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const storage = firebase.storage();
+
 const ltDB = {
-  _dbName: 'LionTechAdmin',
-  _storeName: 'config',
-  _version: 1,
-  _open() {
-    return new Promise((resolve, reject) => {
-      const req = indexedDB.open(this._dbName, this._version);
-      req.onupgradeneeded = (e) => {
-        const db = e.target.result;
-        if (!db.objectStoreNames.contains(this._storeName)) {
-          db.createObjectStore(this._storeName);
-        }
-      };
-      req.onsuccess = () => resolve(req.result);
-      req.onerror = () => reject(req.error);
-    });
-  },
   async get(key) {
-    const db = await this._open();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(this._storeName, 'readonly');
-      const req = tx.objectStore(this._storeName).get(key);
-      req.onsuccess = () => resolve(req.result ?? null);
-      req.onerror = () => reject(req.error);
-    });
+    try {
+      const doc = await db.collection('config').doc(key).get();
+      return doc.exists ? doc.data().value : null;
+    } catch(e) {
+      console.error(e);
+      return null;
+    }
   },
   async set(key, value) {
-    const db = await this._open();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(this._storeName, 'readwrite');
-      tx.objectStore(this._storeName).put(value, key);
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error);
-    });
+    await db.collection('config').doc(key).set({ value });
   },
   async remove(key) {
-    const db = await this._open();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(this._storeName, 'readwrite');
-      tx.objectStore(this._storeName).delete(key);
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error);
-    });
+    await db.collection('config').doc(key).delete();
   }
 };
 
@@ -605,14 +592,17 @@ function clearHeroImage() {
   updateHeroPreview('');
 }
 
-/* Converte arquivo para base64 data URL */
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
+/* Upload para o Firebase Storage */
+async function uploadToFirebase(fileOrDataUrl, folder, isDataUrl = false) {
+  const fileName = isDataUrl ? 'image.jpg' : fileOrDataUrl.name;
+  const ref = storage.ref(`${folder}/${Date.now()}_${fileName}`);
+  let snapshot;
+  if (isDataUrl) {
+    snapshot = await ref.putString(fileOrDataUrl, 'data_url');
+  } else {
+    snapshot = await ref.put(fileOrDataUrl);
+  }
+  return await snapshot.ref.getDownloadURL();
 }
 
 /* Upload de arquivo para o Hero (imagem ou vídeo) */
@@ -627,34 +617,32 @@ async function handleHeroFileUpload(input) {
     return;
   }
 
-  if (isVideo && file.size > 15 * 1024 * 1024) {
-    toast('⚠️ Vídeo muito grande! Tamanho máximo aceito: 15MB. Coloque em assets/video/ e use o caminho no campo abaixo.');
-    input.value = '';
-    return;
-  }
-
-  if (isImage && file.size > 10 * 1024 * 1024) {
-    toast('⚠️ Imagem muito grande! Tamanho máximo aceito: 10MB.');
+  if (file.size > 30 * 1024 * 1024) {
+    toast('⚠️ Arquivo muito grande! Limite de 30MB para evitar lentidão.');
     input.value = '';
     return;
   }
 
   try {
-    let result;
+    toast('⏳ Enviando arquivo para a nuvem... aguarde.');
+    let url;
     if (isImage) {
-      result = await compressImage(file);
+      const compressedUrl = await compressImage(file);
+      url = await uploadToFirebase(compressedUrl, 'hero', true);
     } else {
-      result = await fileToBase64(file);
+      url = await uploadToFirebase(file, 'hero', false);
     }
-    document.getElementById('heroImageUrl').value = result;
+    
+    document.getElementById('heroImageUrl').value = url;
     if (isVideo) {
       document.getElementById('heroMediaType').value = 'video';
       onHeroMediaTypeChange();
     }
-    updateHeroPreview(result, isVideo ? 'video' : 'image');
+    updateHeroPreview(url, isVideo ? 'video' : 'image');
     toast('✅ Arquivo carregado! Clique "Salvar Hero" para aplicar.');
-  } catch(_) {
-    toast('❌ Erro ao ler o arquivo.');
+  } catch(e) {
+    console.error(e);
+    toast('❌ Erro no upload para o Firebase.');
   }
   input.value = '';
 }
@@ -1009,35 +997,30 @@ async function handleGalleryFileUpload(index, input, expectedType) {
     return;
   }
 
-  if (isImage) {
-    try {
-      // Comprime imagem para caber no localStorage
-      const compressed = await compressImage(file);
-      galleryItems[index].src = compressed;
-      galleryItems[index].kind = 'image';
-      renderGalleryItems();
-      autoSaveGallery();
-      toast('✅ Imagem carregada e salva!');
-    } catch(_) {
-      toast('❌ Erro ao processar a imagem.');
+  if (file.size > 30 * 1024 * 1024) {
+    toast('⚠️ Arquivo excede o limite de 30MB da nuvem.');
+    input.value = '';
+    return;
+  }
+
+  toast('⏳ Fazendo upload para a galeria... aguarde.');
+  try {
+    let url;
+    if (isImage) {
+      const compressedUrl = await compressImage(file);
+      url = await uploadToFirebase(compressedUrl, 'gallery', true);
+    } else {
+      url = await uploadToFirebase(file, 'gallery', false);
     }
-  } else if (isVideo) {
-    if (file.size > 15 * 1024 * 1024) {
-      const sizeMB = (file.size / 1024 / 1024).toFixed(1);
-      toast(`⚠️ Vídeo de ${sizeMB}MB excede o limite de 15MB. Coloque o arquivo em assets/video/ e use o caminho.`);
-      input.value = '';
-      return;
-    }
-    try {
-      const b64 = await fileToBase64(file);
-      galleryItems[index].src = b64;
-      galleryItems[index].kind = 'video';
-      renderGalleryItems();
-      autoSaveGallery();
-      toast('✅ Vídeo carregado e salvo!');
-    } catch(_) {
-      toast('❌ Erro ao ler o vídeo.');
-    }
+    
+    galleryItems[index].src = url;
+    galleryItems[index].kind = isImage ? 'image' : 'video';
+    renderGalleryItems();
+    autoSaveGallery();
+    toast('✅ Mídia carregada com sucesso!');
+  } catch(e) {
+    console.error(e);
+    toast('❌ Erro no upload da mídia.');
   }
   input.value = '';
 }

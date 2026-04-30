@@ -1414,6 +1414,8 @@ p  { text-wrap: pretty; color: var(--text-soft); }
 </head>
 <body>
 <div id="root"></div>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -3060,68 +3062,39 @@ function App() {
 
 Object.assign(window, { App, HeartBackground });
 
-/* =================== IndexedDB Loader =================== */
-/* Carrega dados do IndexedDB antes de montar o React */
+/* =================== Firebase Loader =================== */
+/* Carrega dados do Firestore na nuvem antes de montar o React */
 window.__ltData = { hero: {}, gallery: null };
 
-(function bootApp() {
+(async function bootApp() {
   function mountReact() {
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(React.createElement(window.App));
   }
 
-  // Tenta carregar do IndexedDB
+  const firebaseConfig = {
+    apiKey: "AIzaSyCtAKK5CJ0PC2ClKmEf4GY-GXlh4f838Jw",
+    authDomain: "landingpagecanecas.firebaseapp.com",
+    projectId: "landingpagecanecas",
+    storageBucket: "landingpagecanecas.firebasestorage.app",
+    messagingSenderId: "518789402709",
+    appId: "1:518789402709:web:3aa2480f0c5f81bace84dc"
+  };
+  
   try {
-    const req = indexedDB.open('LionTechAdmin', 1);
-    req.onupgradeneeded = (e) => {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains('config')) {
-        db.createObjectStore('config');
-      }
-    };
-    req.onsuccess = (e) => {
-      const db = e.target.result;
-      const tx = db.transaction('config', 'readonly');
-      const store = tx.objectStore('config');
-      let loaded = 0;
-      const done = () => { loaded++; if (loaded >= 2) mountReact(); };
-
-      const heroReq = store.get('lt_hero_config');
-      heroReq.onsuccess = () => {
-        if (heroReq.result) window.__ltData.hero = heroReq.result;
-        else {
-          try { window.__ltData.hero = JSON.parse(localStorage.getItem('lt_hero_config') || '{}'); } catch(_) {}
-        }
-        done();
-      };
-      heroReq.onerror = () => {
-        try { window.__ltData.hero = JSON.parse(localStorage.getItem('lt_hero_config') || '{}'); } catch(_) {}
-        done();
-      };
-
-      const galReq = store.get('lt_gallery_items');
-      galReq.onsuccess = () => {
-        if (galReq.result) window.__ltData.gallery = galReq.result;
-        else {
-          try { const s = localStorage.getItem('lt_gallery_items'); if (s) window.__ltData.gallery = JSON.parse(s); } catch(_) {}
-        }
-        done();
-      };
-      galReq.onerror = () => {
-        try { const s = localStorage.getItem('lt_gallery_items'); if (s) window.__ltData.gallery = JSON.parse(s); } catch(_) {}
-        done();
-      };
-    };
-    req.onerror = () => {
-      // Fallback: localStorage
-      try { window.__ltData.hero = JSON.parse(localStorage.getItem('lt_hero_config') || '{}'); } catch(_) {}
-      try { const s = localStorage.getItem('lt_gallery_items'); if (s) window.__ltData.gallery = JSON.parse(s); } catch(_) {}
-      mountReact();
-    };
-  } catch(_) {
-    // IndexedDB not available, fallback to localStorage
-    try { window.__ltData.hero = JSON.parse(localStorage.getItem('lt_hero_config') || '{}'); } catch(_) {}
-    try { const s = localStorage.getItem('lt_gallery_items'); if (s) window.__ltData.gallery = JSON.parse(s); } catch(_) {}
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    // Busca Hero Config
+    const heroDoc = await db.collection('config').doc('lt_hero_config').get();
+    if (heroDoc.exists) window.__ltData.hero = heroDoc.data().value;
+    
+    // Busca Galeria
+    const galDoc = await db.collection('config').doc('lt_gallery_items').get();
+    if (galDoc.exists) window.__ltData.gallery = galDoc.data().value;
+  } catch(e) {
+    console.error("Erro ao carregar do Firebase. Usando fallback.", e);
+  } finally {
     mountReact();
   }
 })();
