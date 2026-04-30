@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin — Lion Tech</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0f0a1a;
+  --bg-card: #1a1128;
+  --bg-input: #251b38;
+  --border: rgba(124,58,237,.25);
+  --accent: #7c3aed;
+  --accent-light: #a78bfa;
+  --danger: #ef4444;
+  --success: #22c55e;
+  --text: #f1e8ff;
+  --text-soft: #a99bc4;
+  --radius: 14px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
+  min-height: 100vh;
+}
+
+/* ===== LOGIN ===== */
+.login-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+.login-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+.login-box img { width: 56px; margin-bottom: 18px; border-radius: 12px; }
+.login-box h1 { font-size: 22px; margin-bottom: 6px; }
+.login-box p { color: var(--text-soft); font-size: 14px; margin-bottom: 28px; }
+.login-box .field { text-align: left; margin-bottom: 16px; }
+.login-box label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-soft); }
+.login-box input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text);
+  font-size: 15px;
+  outline: none;
+  transition: border-color .2s;
+}
+.login-box input:focus { border-color: var(--accent); }
+.login-box .error {
+  color: var(--danger);
+  font-size: 13px;
+  margin-bottom: 14px;
+  display: none;
+}
+.login-box button {
+  width: 100%;
+  padding: 13px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, var(--accent), #9333ea);
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: opacity .2s;
+  margin-top: 8px;
+}
+.login-box button:hover { opacity: .9; }
+
+/* ===== DASHBOARD ===== */
+.dashboard { display: none; }
+.dashboard.active { display: block; }
+
+.topbar {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.topbar__brand { display: flex; align-items: center; gap: 12px; }
+.topbar__brand img { width: 36px; height: 36px; border-radius: 10px; }
+.topbar__brand strong { font-size: 16px; }
+.topbar__brand small { color: var(--text-soft); font-size: 12px; }
+.topbar .btn-logout {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-soft);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.topbar .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
+
+.main { max-width: 1100px; margin: 0 auto; padding: 36px 24px 80px; }
+
+.section-title {
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+.section-desc { color: var(--text-soft); font-size: 14px; margin-bottom: 24px; }
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 36px;
+}
+
+/* --- Hero editor --- */
+.hero-editor .preview-row {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.hero-editor .preview-box {
+  width: 200px;
+  height: 200px;
+  border-radius: 12px;
+  border: 2px dashed var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--bg-input);
+  flex-shrink: 0;
+  position: relative;
+}
+.hero-editor .preview-box img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.hero-editor .preview-box .placeholder-text {
+  color: var(--text-soft);
+  font-size: 13px;
+  text-align: center;
+  padding: 16px;
+}
+.hero-editor .fields { flex: 1; min-width: 260px; }
+
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-soft); }
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+  transition: border-color .2s;
+}
+.form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+.form-group .hint { color: var(--text-soft); font-size: 12px; margin-top: 4px; }
+
+.btn {
+  padding: 10px 22px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all .2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-primary { background: linear-gradient(135deg, var(--accent), #9333ea); color: #fff; }
+.btn-primary:hover { opacity: .9; }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { opacity: .85; }
+.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-soft); }
+.btn-ghost:hover { border-color: var(--accent-light); color: var(--accent-light); }
+.btn-success { background: var(--success); color: #fff; }
+.btn-success:hover { opacity: .85; }
+.btn-small { padding: 7px 14px; font-size: 12px; }
+.btn-upload {
+  background: linear-gradient(135deg, #1e1535 0%, #2d1f4e 100%);
+  border: 2px dashed var(--accent);
+  color: var(--accent-light);
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all .25s;
+}
+.btn-upload:hover {
+  background: linear-gradient(135deg, #2d1f4e 0%, #3b2a6b 100%);
+  border-color: var(--accent-light);
+  color: #fff;
+}
+
+.btn-remove-hero {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: rgba(0,0,0,.6);
+  border: none;
+  color: #fff;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.hero-editor .preview-box.drag-over {
+  border-color: var(--accent-light);
+  background: rgba(124,58,237,.15);
+}
+
+.g-item .g-preview.drag-over {
+  border-color: var(--accent-light);
+  background: rgba(124,58,237,.15);
+}
+
+/* --- Gallery editor --- */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+.g-item {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  position: relative;
+}
+.g-item .g-preview {
+  width: 100%;
+  height: 150px;
+  border-radius: 10px;
+  background: var(--bg);
+  border: 1px dashed var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.g-item .g-preview img, .g-item .g-preview video {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.g-item .g-preview .no-media {
+  color: var(--text-soft);
+  font-size: 12px;
+}
+.g-item .g-fields { display: flex; flex-direction: column; gap: 10px; }
+.g-item input, .g-item select {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+}
+.g-item input:focus, .g-item select:focus { border-color: var(--accent); }
+.g-item .g-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.g-item .g-order {
+  position: absolute;
+  top: 10px; left: 10px;
+  background: var(--accent);
+  color: #fff;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: var(--success);
+  color: #fff;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.35);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all .35s;
+  z-index: 200;
+  pointer-events: none;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.actions-bar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.divider { border: none; border-top: 1px solid var(--border); margin: 36px 0; }
+
+@media (max-width: 640px) {
+  .topbar { padding: 12px 16px; }
+  .main { padding: 24px 14px 60px; }
+  .hero-editor .preview-row { flex-direction: column; }
+  .hero-editor .preview-box { width: 100%; height: 180px; }
+  .gallery-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div class="login-wrapper" id="loginScreen">
+  <div class="login-box">
+    <img src="assets/logo-icone.png" alt="Lion Tech" />
+    <h1>Painel Administrativo</h1>
+    <p>Acesso restrito — Lion Tech</p>
+    <div class="field">
+      <label for="loginUser">Usuário</label>
+      <input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
+    </div>
+    <div class="field">
+      <label for="loginPass">Senha</label>
+      <input type="password" id="loginPass" placeholder="Sua senha" />
+    </div>
+    <div class="error" id="loginError">Usuário ou senha incorretos.</div>
+    <button onclick="doLogin()">Entrar</button>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div class="dashboard" id="dashboard">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar__brand">
+      <img src="assets/logo-icone.png" alt="Lion Tech" />
+      <div>
+        <strong>Admin</strong><br>
+        <small>Lion Tech — Painel de gerenciamento</small>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="doLogout()">⏻ Sair</button>
+  </div>
+
+  <div class="main">
+
+    <!-- ===== HERO EDITOR ===== -->
+    <h2 class="section-title">🖼️ Mídia Inicial (Hero)</h2>
+    <p class="section-desc">Altere a imagem ou vídeo que aparece no topo da landing page, ao lado do texto.</p>
+
+    <div class="card hero-editor">
+      <div class="preview-row">
+        <div class="preview-box" id="heroPreview">
+          <span class="placeholder-text">Sem imagem customizada<br>(usando ilustração padrão)</span>
+        </div>
+        <div class="fields">
+          <div class="form-group">
+            <label>Tipo de mídia</label>
+            <select id="heroMediaType" onchange="onHeroMediaTypeChange()" style="margin-bottom:10px">
+              <option value="image">🖼️ Imagem</option>
+              <option value="video">🎬 Vídeo</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label id="heroUploadLabel">Imagem do Hero</label>
+            <input type="file" id="heroFileInput" accept="image/*,video/*" style="display:none" onchange="handleHeroFileUpload(this)" />
+            <button class="btn-upload" onclick="document.getElementById('heroFileInput').click()">📁 Selecionar arquivo do computador</button>
+            <div class="hint" style="margin-top:8px">Ou cole uma URL abaixo:</div>
+            <input type="text" id="heroImageUrl" placeholder="Ex: assets/img/caneca.png ou assets/video/caneca.mp4" style="margin-top:6px" />
+          </div>
+          <div class="actions-bar" style="margin-top:6px">
+            <button class="btn btn-primary" onclick="saveHero()">💾 Salvar Hero</button>
+            <button class="btn btn-ghost" onclick="resetHero()">Restaurar padrão</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- ===== GALLERY EDITOR ===== -->
+    <h2 class="section-title">🎨 Galeria de Produtos</h2>
+    <p class="section-desc">Adicione, edite, reordene e remova itens da galeria. Suporta imagens (URL/caminho), vídeos (caminho) e ilustrações SVG padrão.</p>
+
+    <div class="card">
+      <div class="actions-bar" style="margin-bottom: 22px">
+        <button class="btn btn-primary" onclick="addGalleryItem()">+ Novo item</button>
+        <button class="btn btn-success" onclick="saveGallery()">💾 Salvar galeria</button>
+        <button class="btn btn-ghost" onclick="resetGallery()">Restaurar padrão</button>
+      </div>
+
+      <div class="gallery-grid" id="galleryGrid"></div>
+
+      <div class="actions-bar">
+        <button class="btn btn-success" onclick="saveGallery()">💾 Salvar galeria</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== IndexedDB Storage ===== */
+const ltDB = {
+  _dbName: 'LionTechAdmin',
+  _storeName: 'config',
+  _version: 1,
+  _open() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(this._dbName, this._version);
+      req.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(this._storeName)) {
+          db.createObjectStore(this._storeName);
+        }
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  },
+  async get(key) {
+    const db = await this._open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(this._storeName, 'readonly');
+      const req = tx.objectStore(this._storeName).get(key);
+      req.onsuccess = () => resolve(req.result ?? null);
+      req.onerror = () => reject(req.error);
+    });
+  },
+  async set(key, value) {
+    const db = await this._open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(this._storeName, 'readwrite');
+      tx.objectStore(this._storeName).put(value, key);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  },
+  async remove(key) {
+    const db = await this._open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(this._storeName, 'readwrite');
+      tx.objectStore(this._storeName).delete(key);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+};
+
+/* ===== AUTH ===== */
+const CREDS = { user: 'admin', pass: 'kirk5364' };
+
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  if (u === CREDS.user && p === CREDS.pass) {
+    sessionStorage.setItem('lt_admin_auth', '1');
+    showDashboard();
+  } else {
+    const err = document.getElementById('loginError');
+    err.style.display = 'block';
+    setTimeout(() => err.style.display = 'none', 3000);
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') {
+    doLogin();
+  }
+});
+
+function doLogout() {
+  sessionStorage.removeItem('lt_admin_auth');
+  location.reload();
+}
+
+function showDashboard() {
+  document.getElementById('loginScreen').style.display = 'none';
+  const dash = document.getElementById('dashboard');
+  dash.style.display = 'block';
+  dash.classList.add('active');
+  loadHeroEditor();
+  loadGalleryEditor();
+}
+
+// Auto-login if session is active — deferred to avoid TDZ with galleryItems
+document.addEventListener('DOMContentLoaded', () => {
+  if (sessionStorage.getItem('lt_admin_auth') === '1') {
+    showDashboard();
+  }
+});
+
+/* ===== TOAST ===== */
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+/* ===== HERO EDITOR ===== */
+async function loadHeroEditor() {
+  try {
+    let cfg = await ltDB.get('lt_hero_config');
+    // Migração: se IndexedDB vazio, tenta localStorage
+    if (!cfg) {
+      try {
+        const lsData = localStorage.getItem('lt_hero_config');
+        if (lsData) {
+          cfg = JSON.parse(lsData);
+          await ltDB.set('lt_hero_config', cfg); // migra para IndexedDB
+          localStorage.removeItem('lt_hero_config');
+        }
+      } catch(_) {}
+    }
+    cfg = cfg || {};
+    document.getElementById('heroImageUrl').value = cfg.imageUrl || '';
+    const mediaType = cfg.mediaType || 'image';
+    document.getElementById('heroMediaType').value = mediaType;
+    onHeroMediaTypeChange();
+    updateHeroPreview(cfg.imageUrl, mediaType);
+  } catch(_) {}
+}
+
+function updateHeroPreview(url, mediaType) {
+  const box = document.getElementById('heroPreview');
+  if (!mediaType) mediaType = document.getElementById('heroMediaType')?.value || 'image';
+  if (url) {
+    const isVideo = mediaType === 'video' || /\.(mp4|webm|mov|ogg)(\?|$)/i.test(url);
+    if (isVideo) {
+      box.innerHTML = `<video src="${url}" muted loop autoplay playsinline style="width:100%;height:100%;object-fit:cover"></video><button class="btn-remove-hero" onclick="clearHeroImage()">✕</button>`;
+    } else {
+      box.innerHTML = `<img src="${url}" alt="Preview" /><button class="btn-remove-hero" onclick="clearHeroImage()">✕</button>`;
+    }
+  } else {
+    box.innerHTML = `<span class="placeholder-text">Sem mídia customizada<br>(usando ilustração padrão)</span>`;
+  }
+}
+
+function onHeroMediaTypeChange() {
+  const type = document.getElementById('heroMediaType').value;
+  const label = document.getElementById('heroUploadLabel');
+  const fileInput = document.getElementById('heroFileInput');
+  if (type === 'video') {
+    label.textContent = 'Vídeo do Hero';
+    fileInput.accept = 'video/*';
+  } else {
+    label.textContent = 'Imagem do Hero';
+    fileInput.accept = 'image/*';
+  }
+}
+
+function clearHeroImage() {
+  document.getElementById('heroImageUrl').value = '';
+  updateHeroPreview('');
+}
+
+/* Converte arquivo para base64 data URL */
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+/* Upload de arquivo para o Hero (imagem ou vídeo) */
+async function handleHeroFileUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const mediaType = document.getElementById('heroMediaType').value;
+  const isVideo = mediaType === 'video' || file.type.startsWith('video/');
+  const isImage = file.type.startsWith('image/');
+  if (!isVideo && !isImage) {
+    toast('⚠️ Selecione um arquivo de imagem ou vídeo.');
+    return;
+  }
+
+  if (isVideo && file.size > 15 * 1024 * 1024) {
+    toast('⚠️ Vídeo muito grande! Tamanho máximo aceito: 15MB. Coloque em assets/video/ e use o caminho no campo abaixo.');
+    input.value = '';
+    return;
+  }
+
+  if (isImage && file.size > 10 * 1024 * 1024) {
+    toast('⚠️ Imagem muito grande! Tamanho máximo aceito: 10MB.');
+    input.value = '';
+    return;
+  }
+
+  try {
+    let result;
+    if (isImage) {
+      result = await compressImage(file);
+    } else {
+      result = await fileToBase64(file);
+    }
+    document.getElementById('heroImageUrl').value = result;
+    if (isVideo) {
+      document.getElementById('heroMediaType').value = 'video';
+      onHeroMediaTypeChange();
+    }
+    updateHeroPreview(result, isVideo ? 'video' : 'image');
+    toast('✅ Arquivo carregado! Clique "Salvar Hero" para aplicar.');
+  } catch(_) {
+    toast('❌ Erro ao ler o arquivo.');
+  }
+  input.value = '';
+}
+
+/* Drag-and-drop no Hero preview */
+(function setupHeroDragDrop() {
+  document.addEventListener('DOMContentLoaded', () => {
+    const box = document.getElementById('heroPreview');
+    if (!box) return;
+    box.addEventListener('dragover', e => { e.preventDefault(); box.classList.add('drag-over'); });
+    box.addEventListener('dragleave', () => box.classList.remove('drag-over'));
+    box.addEventListener('drop', async e => {
+      e.preventDefault();
+      box.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (!file) return;
+      const isVideo = file.type.startsWith('video/');
+      const isImage = file.type.startsWith('image/');
+      if (isImage || isVideo) {
+        if (isVideo && file.size > 15 * 1024 * 1024) {
+          toast('⚠️ Vídeo muito grande! Tamanho máximo aceito: 15MB.');
+          return;
+        }
+        const result = isImage ? await compressImage(file) : await fileToBase64(file);
+        document.getElementById('heroImageUrl').value = result;
+        if (isVideo) {
+          document.getElementById('heroMediaType').value = 'video';
+          onHeroMediaTypeChange();
+        }
+        updateHeroPreview(result, isVideo ? 'video' : 'image');
+        toast('✅ Arquivo carregado! Clique "Salvar Hero" para aplicar.');
+      }
+    });
+  });
+})();
+
+async function saveHero() {
+  const cfg = {
+    imageUrl: document.getElementById('heroImageUrl').value.trim(),
+    mediaType: document.getElementById('heroMediaType').value,
+  };
+  try {
+    await ltDB.set('lt_hero_config', cfg);
+    updateHeroPreview(cfg.imageUrl, cfg.mediaType);
+    toast('✅ Hero salvo! Recarregue a landing page para ver.');
+  } catch(e) {
+    toast('❌ Erro ao salvar: ' + e.message);
+  }
+}
+
+async function resetHero() {
+  if (!confirm('Tem certeza que quer restaurar o Hero para o padrão?')) return;
+  try { await ltDB.remove('lt_hero_config'); } catch(_) {}
+  document.getElementById('heroImageUrl').value = '';
+  updateHeroPreview('');
+  toast('Hero restaurado para o padrão.');
+}
+
+// Preview on URL input change
+document.getElementById('heroImageUrl')?.addEventListener('input', function() {
+  updateHeroPreview(this.value.trim());
+});
+
+/* ===== GALLERY EDITOR ===== */
+const DEFAULT_GALLERY_ITEMS = [
+  { kind: 'photo', variant: 'mae',     tag: 'Dia das Mães', title: 'A melhor mãe sempre', src: '' },
+  { kind: 'video', src: '',  tag: 'Personalizada', title: 'Foto + frase para mãe', variant: '' },
+  { kind: 'photo', variant: 'casal',   tag: 'Mãe & Filha', title: 'Ilustração afetiva', src: '' },
+  { kind: 'video', src: '',       tag: 'Genérica',  title: 'Caneca floral elegante', variant: '' },
+  { kind: 'photo', variant: 'empresa', tag: 'Empresas',  title: 'Brinde corporativo', src: '' },
+  { kind: 'video', src: '',  tag: 'Personalizada', title: 'Polaroid + flores', variant: '' },
+  { kind: 'photo', variant: 'foto',    tag: 'Foto',      title: 'Polaroid clássica', src: '' },
+  { kind: 'video', src: '',       tag: 'Genérica',  title: 'Tipografia decorativa', variant: '' },
+  { kind: 'photo', variant: 'frase',   tag: 'Tipografia', title: 'Mãe — título maior que rainha', src: '' },
+];
+
+let galleryItems = [];
+
+async function loadGalleryEditor() {
+  try {
+    let saved = await ltDB.get('lt_gallery_items');
+    // Migração: se IndexedDB vazio, tenta localStorage
+    if (!saved) {
+      try {
+        const lsData = localStorage.getItem('lt_gallery_items');
+        if (lsData) {
+          saved = JSON.parse(lsData);
+          await ltDB.set('lt_gallery_items', saved); // migra para IndexedDB
+          localStorage.removeItem('lt_gallery_items');
+        }
+      } catch(_) {}
+    }
+    galleryItems = saved ? saved : JSON.parse(JSON.stringify(DEFAULT_GALLERY_ITEMS));
+  } catch(_) {
+    galleryItems = JSON.parse(JSON.stringify(DEFAULT_GALLERY_ITEMS));
+  }
+  renderGalleryItems();
+}
+
+/* Auto-save: salva galeria no IndexedDB automaticamente */
+async function autoSaveGallery() {
+  try {
+    await ltDB.set('lt_gallery_items', galleryItems);
+  } catch(e) {
+    console.warn('Auto-save falhou:', e);
+  }
+}
+
+function renderGalleryItems() {
+  const grid = document.getElementById('galleryGrid');
+  grid.innerHTML = '';
+  galleryItems.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'g-item';
+
+    // --- Preview (created as DOM to avoid base64 in innerHTML) ---
+    const previewDiv = document.createElement('div');
+    previewDiv.className = 'g-preview';
+    if (item.kind === 'image' && item.src) {
+      const img = document.createElement('img');
+      img.src = item.src;
+      img.alt = item.title || '';
+      previewDiv.appendChild(img);
+    } else if (item.kind === 'video' && item.src) {
+      const vid = document.createElement('video');
+      vid.src = item.src;
+      vid.muted = true;
+      previewDiv.appendChild(vid);
+    } else {
+      const label = item.kind === 'photo' ? `Ilustração SVG: ${item.variant || 'mae'}` : 'Sem mídia';
+      previewDiv.innerHTML = `<span class="no-media">${label}</span>`;
+    }
+
+    // --- Order badge ---
+    const orderSpan = document.createElement('span');
+    orderSpan.className = 'g-order';
+    orderSpan.textContent = i + 1;
+
+    // --- Fields (no base64 in innerHTML) ---
+    const fieldsDiv = document.createElement('div');
+    fieldsDiv.className = 'g-fields';
+
+    // Determine the URL display value safely
+    const srcDisplay = (item.src || '').startsWith('data:')
+      ? (item.kind === 'video' ? '(vídeo carregado)' : '(imagem carregada)')
+      : (item.src || '');
+    const escapedTitle = (item.title || '').replace(/"/g, '&quot;');
+    const escapedTag = (item.tag || '').replace(/"/g, '&quot;');
+    const escapedSrcDisplay = srcDisplay.replace(/"/g, '&quot;');
+
+    fieldsDiv.innerHTML = `
+        <div>
+          <label style="font-size:12px;color:var(--text-soft);margin-bottom:3px;display:block">Tipo</label>
+          <select data-action="changeKind" data-idx="${i}">
+            <option value="image" ${item.kind==='image'?'selected':''}>🖼️ Imagem (URL/caminho)</option>
+            <option value="video" ${item.kind==='video'?'selected':''}>🎬 Vídeo (caminho)</option>
+            <option value="photo" ${item.kind==='photo'?'selected':''}>✏️ Ilustração SVG padrão</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--text-soft);margin-bottom:3px;display:block">Nome da caneca</label>
+          <input type="text" value="${escapedTitle}" data-action="editTitle" data-idx="${i}" placeholder="Ex: Caneca Dia das Mães" />
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--text-soft);margin-bottom:3px;display:block">Tag/categoria</label>
+          <input type="text" value="${escapedTag}" data-action="editTag" data-idx="${i}" placeholder="Ex: Personalizada" />
+        </div>
+        ${item.kind === 'image' ? `
+        <div>
+          <label style="font-size:12px;color:var(--text-soft);margin-bottom:3px;display:block">Imagem</label>
+          <input type="file" id="gFileInput_${i}" accept="image/*" style="display:none" data-action="fileUpload" data-idx="${i}" data-type="image" />
+          <button class="btn-upload" style="width:100%;justify-content:center" data-action="triggerFile" data-idx="${i}">📁 Selecionar imagem</button>
+          <input type="text" value="${escapedSrcDisplay}" data-action="editSrc" data-idx="${i}" placeholder="Ou cole URL/caminho aqui" style="margin-top:6px" />
+        </div>` : ''}
+        ${item.kind === 'video' ? `
+        <div>
+          <label style="font-size:12px;color:var(--text-soft);margin-bottom:3px;display:block">Vídeo</label>
+          <input type="file" id="gFileInput_${i}" accept="video/*" style="display:none" data-action="fileUpload" data-idx="${i}" data-type="video" />
+          <button class="btn-upload" style="width:100%;justify-content:center" data-action="triggerFile" data-idx="${i}">📁 Selecionar vídeo</button>
+          <input type="text" value="${escapedSrcDisplay}" data-action="editSrc" data-idx="${i}" placeholder="Ou cole caminho: assets/video/caneca.mp4" style="margin-top:6px" />
+          <div style="font-size:11px;color:var(--text-soft);margin-top:4px">⚠️ Vídeos grandes: coloque em assets/video/ e use o caminho</div>
+        </div>` : ''}
+        ${item.kind === 'photo' ? `
+        <div>
+          <label style="font-size:12px;color:var(--text-soft);margin-bottom:3px;display:block">Variante SVG</label>
+          <select data-action="editVariant" data-idx="${i}">
+            <option value="mae" ${item.variant==='mae'?'selected':''}>Mãe (coração)</option>
+            <option value="casal" ${item.variant==='casal'?'selected':''}>Casal (dois corações)</option>
+            <option value="empresa" ${item.variant==='empresa'?'selected':''}>Empresa (logo)</option>
+            <option value="foto" ${item.variant==='foto'?'selected':''}>Foto (polaroid)</option>
+            <option value="frase" ${item.variant==='frase'?'selected':''}>Frase (tipografia)</option>
+          </select>
+        </div>` : ''}
+        <div class="g-actions">
+          ${i > 0 ? `<button class="btn btn-ghost btn-small" data-action="moveUp" data-idx="${i}">↑ Subir</button>` : ''}
+          ${i < galleryItems.length - 1 ? `<button class="btn btn-ghost btn-small" data-action="moveDown" data-idx="${i}">↓ Descer</button>` : ''}
+          <button class="btn btn-danger btn-small" data-action="remove" data-idx="${i}">✕ Remover</button>
+        </div>
+    `;
+
+    div.appendChild(orderSpan);
+    div.appendChild(previewDiv);
+    div.appendChild(fieldsDiv);
+    grid.appendChild(div);
+  });
+}
+
+/* Event delegation for gallery actions — avoids inline onclick issues with base64 data */
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const idx = parseInt(btn.dataset.idx);
+  if (isNaN(idx)) return;
+
+  switch (action) {
+    case 'remove':
+      galleryItems.splice(idx, 1);
+      renderGalleryItems();
+      autoSaveGallery();
+      toast('Item removido e salvo.');
+      break;
+    case 'moveUp':
+      if (idx > 0) {
+        [galleryItems[idx], galleryItems[idx - 1]] = [galleryItems[idx - 1], galleryItems[idx]];
+        renderGalleryItems();
+        autoSaveGallery();
+      }
+      break;
+    case 'moveDown':
+      if (idx < galleryItems.length - 1) {
+        [galleryItems[idx], galleryItems[idx + 1]] = [galleryItems[idx + 1], galleryItems[idx]];
+        renderGalleryItems();
+        autoSaveGallery();
+      }
+      break;
+    case 'triggerFile':
+      document.getElementById('gFileInput_' + idx)?.click();
+      break;
+  }
+});
+
+document.addEventListener('change', function(e) {
+  const el = e.target;
+  const action = el.dataset.action;
+  const idx = parseInt(el.dataset.idx);
+  if (!action || isNaN(idx)) return;
+
+  switch (action) {
+    case 'changeKind':
+      galleryItems[idx].kind = el.value;
+      renderGalleryItems();
+      autoSaveGallery();
+      break;
+    case 'editTitle':
+      galleryItems[idx].title = el.value;
+      autoSaveGallery();
+      break;
+    case 'editTag':
+      galleryItems[idx].tag = el.value;
+      autoSaveGallery();
+      break;
+    case 'editSrc':
+      galleryItems[idx].src = el.value;
+      autoSaveGallery();
+      break;
+    case 'editVariant':
+      galleryItems[idx].variant = el.value;
+      autoSaveGallery();
+      break;
+    case 'fileUpload':
+      handleGalleryFileUpload(idx, el, el.dataset.type);
+      break;
+  }
+});
+
+function addGalleryItem() {
+  galleryItems.push({
+    kind: 'image',
+    src: '',
+    tag: 'Nova',
+    title: 'Nova caneca',
+    variant: ''
+  });
+  renderGalleryItems();
+  autoSaveGallery();
+  const grid = document.getElementById('galleryGrid');
+  grid.lastChild?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+async function saveGallery() {
+  try {
+    await ltDB.set('lt_gallery_items', galleryItems);
+    toast('✅ Galeria salva! Recarregue a landing page para ver.');
+  } catch(e) {
+    toast('❌ Erro ao salvar: ' + e.message);
+  }
+}
+
+async function resetGallery() {
+  if (!confirm('Restaurar a galeria para os itens padrão? As alterações serão perdidas.')) return;
+  try { await ltDB.remove('lt_gallery_items'); } catch(_) {}
+  galleryItems = JSON.parse(JSON.stringify(DEFAULT_GALLERY_ITEMS));
+  renderGalleryItems();
+  toast('Galeria restaurada para o padrão.');
+}
+
+/* Comprime imagem via canvas — preserva transparência de PNGs */
+function compressImage(file, maxWidth = 800, quality = 0.75) {
+  return new Promise((resolve, reject) => {
+    const isPng = file.type === 'image/png' || file.name.toLowerCase().endsWith('.png');
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let w = img.width, h = img.height;
+        if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        if (isPng) {
+          // PNG: fundo transparente preservado
+          ctx.clearRect(0, 0, w, h);
+          ctx.drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/png'));
+        } else {
+          // JPEG/outros: fundo branco + compressão
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, w, h);
+          ctx.drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        }
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+/* Upload de arquivo para item da galeria (imagem ou vídeo) */
+async function handleGalleryFileUpload(index, input, expectedType) {
+  const file = input.files[0];
+  if (!file) return;
+  const isImage = file.type.startsWith('image/');
+  const isVideo = file.type.startsWith('video/');
+
+  if (!isImage && !isVideo) {
+    toast('⚠️ Selecione um arquivo de imagem ou vídeo.');
+    input.value = '';
+    return;
+  }
+
+  if (isImage) {
+    try {
+      // Comprime imagem para caber no localStorage
+      const compressed = await compressImage(file);
+      galleryItems[index].src = compressed;
+      galleryItems[index].kind = 'image';
+      renderGalleryItems();
+      autoSaveGallery();
+      toast('✅ Imagem carregada e salva!');
+    } catch(_) {
+      toast('❌ Erro ao processar a imagem.');
+    }
+  } else if (isVideo) {
+    if (file.size > 15 * 1024 * 1024) {
+      const sizeMB = (file.size / 1024 / 1024).toFixed(1);
+      toast(`⚠️ Vídeo de ${sizeMB}MB excede o limite de 15MB. Coloque o arquivo em assets/video/ e use o caminho.`);
+      input.value = '';
+      return;
+    }
+    try {
+      const b64 = await fileToBase64(file);
+      galleryItems[index].src = b64;
+      galleryItems[index].kind = 'video';
+      renderGalleryItems();
+      autoSaveGallery();
+      toast('✅ Vídeo carregado e salvo!');
+    } catch(_) {
+      toast('❌ Erro ao ler o vídeo.');
+    }
+  }
+  input.value = '';
+}
+</script>
+</body>
+</html>

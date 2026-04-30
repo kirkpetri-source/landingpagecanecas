@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#fff7f5" />
+<title>Lion Tech — Canecas Personalizadas | Presentes que emocionam</title>
+<meta name="description" content="Canecas personalizadas Lion Tech: presentes para Dia das Mães, datas especiais, lembranças afetivas e brindes corporativos. Personalize com foto, nome, frase ou sua arte. Atendimento direto pelo WhatsApp." />
+
+<!-- Fontes -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" />
+
+<!-- CSS -->
+<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="sections.css" />
+</head>
+<body>
+<div id="root"></div>
+
+<!-- React 18 + Babel inline -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!-- Componentes (cada um expõe o nome em window via Object.assign) -->
+<script type="text/babel" src="components/Nav.jsx" data-presets="env,react"></script>
+<script type="text/babel" src="components/Hero.jsx" data-presets="env,react"></script>
+<script type="text/babel" src="components/Marquee.jsx" data-presets="env,react"></script>
+<script type="text/babel" src="components/Thesis.jsx" data-presets="env,react"></script>
+<script type="text/babel" src="components/Arguments.jsx" data-presets="env,react"></script>
+<script type="text/babel" src="components/PullBand.jsx" data-presets="env,react"></script>
+<script type="text/babel" src="components/WhyNow.jsx" data-presets="env,react"></script>
+<script type="text/babel" src="components/BeforeAfter.jsx" data-presets="env,react"></script>
+<script type="text/babel" src="components/Service.jsx" data-presets="env,react"></script>
+<script type="text/babel" src="components/Gallery.jsx" data-presets="env,react"></script>
+<script type="text/babel" src="components/Process.jsx" data-presets="env,react"></script>
+<script type="text/babel" src="components/FAQ.jsx" data-presets="env,react"></script>
+<script type="text/babel" src="components/FinalCTA.jsx" data-presets="env,react"></script>
+<script type="text/babel" src="components/Footer.jsx" data-presets="env,react"></script>
+<script type="text/babel" src="components/Tweaks.jsx" data-presets="env,react"></script>
+<script type="text/babel" src="components/App.jsx" data-presets="env,react"></script>
+
+<!-- Bootstrap React -->
+<script type="text/babel" data-presets="env,react">
+  // Pequeno polling porque os scripts type=text/babel com src= são carregados de forma assíncrona
+  (function boot() {
+    if (typeof window.App !== 'function') {
+      return setTimeout(boot, 30);
+    }
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(React.createElement(window.App));
+  })();
+</script>
+</body>
+</html>

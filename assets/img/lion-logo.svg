@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <defs>
+    <linearGradient id="lionGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="55%" stop-color="#6d28d9"/>
+      <stop offset="100%" stop-color="#4c1d95"/>
+    </linearGradient>
+    <linearGradient id="lionShine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity=".9"/>
+      <stop offset="100%" stop-color="#a78bfa" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(15 30)">
+    <!-- corpo -->
+    <path d="M30 95 C30 70 50 60 78 60 L120 60 C148 60 165 76 165 105 L165 130 C165 138 158 145 150 145 L145 145 L145 155 C145 160 141 163 137 163 L132 163 C128 163 125 160 125 155 L125 145 L70 145 L70 155 C70 160 66 163 62 163 L57 163 C53 163 50 160 50 155 L50 145 L40 145 C34 145 30 141 30 135 Z" fill="url(#lionGrad)"/>
+    <!-- juba -->
+    <path d="M115 30 C100 30 90 40 88 55 C82 50 75 50 70 55 C65 47 56 45 50 52 C52 45 50 38 45 35 C55 22 75 18 90 25 C95 18 108 14 120 18 C135 8 155 12 165 25 C170 22 178 26 178 35 C182 38 184 48 178 55 C182 60 180 70 172 72 C176 80 170 90 162 88 C160 100 150 105 142 100 C140 90 138 80 135 72 C130 60 125 45 115 30 Z" fill="url(#lionGrad)"/>
+    <!-- highlight juba -->
+    <path d="M115 32 C110 35 108 45 110 55 C115 65 122 75 128 80 C124 65 120 48 115 32 Z" fill="url(#lionShine)" opacity=".7"/>
+    <!-- cabeça/focinho -->
+    <path d="M138 48 C150 48 158 56 158 68 L158 78 C158 86 153 92 145 92 L138 92 L138 80 C138 75 134 72 130 73 L128 73 C129 65 132 56 138 48 Z" fill="url(#lionGrad)"/>
+    <!-- rabo -->
+    <path d="M30 95 C20 95 10 100 8 110 C6 122 14 130 22 128 C18 124 18 118 24 116 C30 114 36 118 36 122 L36 102 Z" fill="url(#lionGrad)"/>
+    <!-- highlight corpo -->
+    <path d="M55 75 C70 70 100 70 130 75 C115 78 95 79 75 80 C66 81 60 79 55 75 Z" fill="#a78bfa" opacity=".4"/>
+  </g>
+</svg>

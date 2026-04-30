@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin — Galeria de Canecas | Lion Tech</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --purple: #7c3aed;
+    --purple-light: #ede9fe;
+    --purple-dark: #4c1d95;
+    --red: #e11d48;
+    --green: #16a34a;
+    --green-bg: #dcfce7;
+    --bg: #f8f7ff;
+    --surface: #fff;
+    --border: rgba(124,58,237,.18);
+    --text: #1f1230;
+    --text-mute: #6b7280;
+    --radius: 12px;
+    --shadow: 0 4px 20px rgba(124,58,237,.10);
+  }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .admin-header {
+    background: linear-gradient(135deg, #1f1230 0%, #4c1d95 100%);
+    color: #fff;
+    padding: 0;
+    position: sticky; top: 0; z-index: 10;
+    box-shadow: 0 4px 24px rgba(0,0,0,.25);
+  }
+  .admin-header__inner {
+    max-width: 1100px; margin: 0 auto; padding: 18px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    flex-wrap: wrap;
+  }
+  .admin-header__brand {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .admin-header__brand .lion-icon {
+    width: 40px; height: 40px; background: rgba(255,255,255,.15);
+    border-radius: 12px; display: grid; place-items: center; font-size: 22px;
+  }
+  .admin-header__brand h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 22px; font-weight: 700; color: #fff;
+  }
+  .admin-header__brand span {
+    display: block; font-size: 11px; color: rgba(255,255,255,.55);
+    letter-spacing: .12em; text-transform: uppercase;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 20px; border-radius: 999px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    border: none; transition: all .2s ease;
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--red), var(--purple));
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(225,29,72,.35);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(225,29,72,.45); }
+  .btn-success {
+    background: var(--green); color: #fff;
+    box-shadow: 0 4px 16px rgba(22,163,74,.3);
+  }
+  .btn-success:hover { background: #15803d; }
+  .btn-ghost {
+    background: rgba(255,255,255,.12); color: #fff;
+    border: 1px solid rgba(255,255,255,.25);
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,.22); }
+  .btn-danger { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
+  .btn-danger:hover { background: #fecaca; }
+  .btn-sm { padding: 7px 14px; font-size: 12.5px; }
+
+  /* ── Layout ── */
+  .page { max-width: 1100px; margin: 0 auto; padding: 32px 24px 80px; }
+
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 26px; font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .section-sub { color: var(--text-mute); font-size: 14px; margin-bottom: 28px; }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed; bottom: 28px; right: 28px; z-index: 999;
+    background: #1f1230; color: #fff;
+    padding: 14px 22px; border-radius: 12px;
+    font-size: 14px; font-weight: 500;
+    box-shadow: 0 8px 32px rgba(0,0,0,.22);
+    transform: translateY(20px); opacity: 0;
+    transition: all .3s ease;
+    display: flex; align-items: center; gap: 10px;
+    pointer-events: none;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ── Cards da galeria ── */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .gallery-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 16px;
+    transition: box-shadow .2s ease;
+  }
+  .gallery-card:hover { box-shadow: 0 8px 32px rgba(124,58,237,.15); }
+  .gallery-card__header {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .item-num {
+    font-size: 11px; font-weight: 700; letter-spacing: .15em;
+    color: var(--purple); text-transform: uppercase;
+  }
+  .kind-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 11.5px; font-weight: 600;
+  }
+  .kind-video { background: #ede9fe; color: var(--purple-dark); }
+  .kind-photo { background: #fce7f3; color: #9d174d; }
+
+  .field-group { display: flex; flex-direction: column; gap: 6px; }
+  .field-label {
+    font-size: 12px; font-weight: 600; color: var(--text-mute);
+    text-transform: uppercase; letter-spacing: .1em;
+  }
+  .field-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 14px; font-family: inherit; color: var(--text);
+    background: #faf9ff;
+    transition: border-color .2s;
+    outline: none;
+  }
+  .field-input:focus { border-color: var(--purple); background: #fff; }
+  .field-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+  }
+
+  .card-actions {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    border-top: 1px solid var(--border);
+    padding-top: 14px; margin-top: 2px;
+  }
+
+  /* Indicador de vídeo com preview */
+  .video-preview-wrap {
+    background: #f1eeff;
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .video-preview-wrap .icon { font-size: 22px; }
+  .video-preview-wrap .info { flex: 1; min-width: 0; }
+  .video-preview-wrap .info small {
+    display: block; font-size: 11.5px; color: var(--text-mute);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  /* ── Add Item ── */
+  .add-card {
+    border: 2px dashed var(--border);
+    border-radius: 18px;
+    padding: 32px;
+    text-align: center;
+    background: rgba(124,58,237,.02);
+    cursor: pointer;
+    transition: background .2s, border-color .2s;
+  }
+  .add-card:hover { background: rgba(124,58,237,.05); border-color: var(--purple); }
+  .add-card .plus { font-size: 36px; color: var(--purple); line-height: 1; margin-bottom: 8px; }
+  .add-card p { color: var(--text-mute); font-size: 14px; }
+
+  /* ── Stats bar ── */
+  .stats-bar {
+    display: flex; gap: 18px; flex-wrap: wrap;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 24px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+  }
+  .stat { display: flex; flex-direction: column; gap: 2px; }
+  .stat strong { font-size: 22px; font-family: 'Fraunces', serif; color: var(--purple); }
+  .stat span { font-size: 12px; color: var(--text-mute); }
+
+  /* ── Instructions ── */
+  .instructions {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin-bottom: 28px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .instructions strong { color: #92400e; }
+  .instructions ul { padding-left: 18px; margin-top: 8px; }
+  .instructions li { margin-bottom: 4px; }
+
+  /* ── Footer actions ── */
+  .footer-actions {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(255,255,255,.92);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    flex-wrap: wrap;
+    z-index: 10;
+  }
+  .footer-actions .status { font-size: 13px; color: var(--text-mute); }
+  .footer-actions .status strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+<header class="admin-header">
+  <div class="admin-header__inner">
+    <div class="admin-header__brand">
+      <div class="lion-icon">🦁</div>
+      <div>
+        <h1>Lion Tech Admin</h1>
+        <span>Gerenciador de Galeria</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a href="landing-canecas-standalone.html" target="_blank" class="btn btn-ghost">
+        🔗 Ver landing page
+      </a>
+      <button class="btn btn-success" onclick="saveAll()">
+        💾 Salvar alterações
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <h2 class="section-title">📸 Galeria de Produtos</h2>
+  <p class="section-sub">Edite os itens da galeria que aparecem na landing page. Clique em "Salvar alterações" para publicar.</p>
+
+  <div class="instructions">
+    <strong>⚡ Como usar:</strong>
+    <ul>
+      <li>Para itens de <strong>vídeo</strong>: coloque o caminho do arquivo (ex: <code>assets/video/meuVideo.mp4</code>) ou uma URL direta</li>
+      <li>Para itens de <strong>foto</strong>: são ilustrações SVG geradas automaticamente — escolha a variante</li>
+      <li>Após salvar, <strong>recarregue a landing page</strong> para ver as mudanças</li>
+      <li>Use o botão <strong>"Resetar para padrão"</strong> se quiser voltar ao original</li>
+    </ul>
+  </div>
+
+  <!-- Estatísticas -->
+  <div class="stats-bar" id="stats-bar">
+    <div class="stat"><strong id="stat-total">0</strong><span>Itens na galeria</span></div>
+    <div class="stat"><strong id="stat-videos">0</strong><span>Vídeos</span></div>
+    <div class="stat"><strong id="stat-photos">0</strong><span>Fotos/Ilustrações</span></div>
+  </div>
+
+  <!-- Grid de itens -->
+  <div class="gallery-grid" id="gallery-grid"></div>
+
+  <!-- Adicionar item -->
+  <div class="add-card" onclick="addItem()">
+    <div class="plus">+</div>
+    <p>Adicionar novo item à galeria</p>
+  </div>
+</main>
+
+<!-- Barra de ações fixa -->
+<div class="footer-actions">
+  <span class="status" id="status-text">
+    Carregando itens…
+  </span>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn btn-danger btn-sm" onclick="resetToDefault()">🔄 Resetar para padrão</button>
+    <button class="btn btn-primary" onclick="saveAll()">💾 Salvar alterações</button>
+  </div>
+</div>
+
+<!-- Toast de notificação -->
+<div id="toast">✅ <span id="toast-msg">Salvo com sucesso!</span></div>
+
+<script>
+// ===== DADOS DEFAULT (mesmos do landing page) =====
+const DEFAULT_ITEMS = [
+  { kind: 'photo', variant: 'mae',     tag: 'Dia das Mães',  title: 'A melhor mãe sempre' },
+  { kind: 'video', src: '',            tag: 'Personalizada',  title: 'Foto + frase para mãe' },
+  { kind: 'photo', variant: 'casal',   tag: 'Mãe & Filha',   title: 'Ilustração afetiva' },
+  { kind: 'video', src: '',            tag: 'Genérica',       title: 'Caneca floral elegante' },
+  { kind: 'photo', variant: 'empresa', tag: 'Empresas',       title: 'Brinde corporativo' },
+  { kind: 'video', src: '',            tag: 'Personalizada',  title: 'Polaroid + flores' },
+  { kind: 'photo', variant: 'foto',    tag: 'Foto',           title: 'Polaroid clássica' },
+  { kind: 'video', src: '',            tag: 'Genérica',       title: 'Tipografia decorativa' },
+  { kind: 'photo', variant: 'frase',   tag: 'Tipografia',     title: 'Mãe — título maior que rainha' },
+];
+
+const VARIANTS = ['mae','casal','empresa','foto','frase'];
+
+let items = [];
+
+// ===== LOAD =====
+function load() {
+  try {
+    const saved = localStorage.getItem('lt_gallery_items');
+    items = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+  } catch(_) {
+    items = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+  }
+  renderAll();
+}
+
+// ===== RENDER =====
+function renderAll() {
+  const grid = document.getElementById('gallery-grid');
+  grid.innerHTML = '';
+  items.forEach((item, i) => {
+    grid.appendChild(makeCard(item, i));
+  });
+  updateStats();
+  updateStatus();
+}
+
+function makeCard(item, i) {
+  const div = document.createElement('div');
+  div.className = 'gallery-card';
+  div.dataset.index = i;
+  div.innerHTML = `
+    <div class="gallery-card__header">
+      <span class="item-num">Item ${String(i+1).padStart(2,'0')}</span>
+      <span class="kind-badge kind-${item.kind}">${item.kind === 'video' ? '🎬 Vídeo' : '🖼️ Foto/SVG'}</span>
+    </div>
+
+    <!-- Tipo -->
+    <div class="field-group">
+      <label class="field-label">Tipo de mídia</label>
+      <select class="field-input field-select" onchange="changeKind(${i}, this.value)">
+        <option value="photo" ${item.kind==='photo'?'selected':''}>🖼️ Foto / Ilustração SVG</option>
+        <option value="video" ${item.kind==='video'?'selected':''}>🎬 Vídeo</option>
+      </select>
+    </div>
+
+    <!-- Título do modelo -->
+    <div class="field-group">
+      <label class="field-label">Nome do modelo / título</label>
+      <input class="field-input" type="text" placeholder="Ex: Caneca Dia das Mães 2026"
+        value="${escHtml(item.title)}" oninput="updateField(${i}, 'title', this.value)" />
+    </div>
+
+    <!-- Tag de categoria -->
+    <div class="field-group">
+      <label class="field-label">Categoria / tag</label>
+      <input class="field-input" type="text" placeholder="Ex: Dia das Mães, Personalizada, Empresas…"
+        value="${escHtml(item.tag)}" oninput="updateField(${i}, 'tag', this.value)" />
+    </div>
+
+    ${item.kind === 'video' ? renderVideoFields(item, i) : renderPhotoFields(item, i)}
+
+    <div class="card-actions">
+      <button class="btn btn-danger btn-sm" onclick="removeItem(${i})">🗑 Remover</button>
+      ${i > 0 ? `<button class="btn btn-sm" style="background:#ede9fe;color:#4c1d95" onclick="moveUp(${i})">↑ Subir</button>` : ''}
+      ${i < items.length-1 ? `<button class="btn btn-sm" style="background:#ede9fe;color:#4c1d95" onclick="moveDown(${i})">↓ Descer</button>` : ''}
+    </div>
+  `;
+  return div;
+}
+
+function renderVideoFields(item, i) {
+  return `
+    <div class="field-group">
+      <label class="field-label">Caminho ou URL do vídeo</label>
+      <input class="field-input" type="text"
+        placeholder="assets/video/minha-caneca.mp4 ou https://…"
+        value="${escHtml(item.src || '')}"
+        oninput="updateField(${i}, 'src', this.value)" />
+    </div>
+    ${item.src ? `
+    <div class="video-preview-wrap">
+      <span class="icon">▶️</span>
+      <div class="info">
+        <strong>Vídeo configurado</strong>
+        <small>${escHtml(item.src)}</small>
+      </div>
+    </div>` : `
+    <div class="video-preview-wrap" style="background:#fff3f3;border:1px solid #fca5a5;">
+      <span class="icon">⚠️</span>
+      <div class="info">
+        <strong style="color:#dc2626">Sem vídeo</strong>
+        <small style="color:#dc2626">Insira o caminho acima. Enquanto vazio, o card aparece sem mídia.</small>
+      </div>
+    </div>`}
+  `;
+}
+
+function renderPhotoFields(item, i) {
+  return `
+    <div class="field-group">
+      <label class="field-label">Variante da ilustração SVG</label>
+      <select class="field-input field-select" onchange="updateField(${i}, 'variant', this.value)">
+        ${VARIANTS.map(v => `<option value="${v}" ${item.variant===v?'selected':''}>${v.charAt(0).toUpperCase()+v.slice(1)}</option>`).join('')}
+      </select>
+      <span style="font-size:12px;color:#6b7280;margin-top:3px">
+        Ilustrações automáticas: mae, casal, empresa, foto, frase
+      </span>
+    </div>
+  `;
+}
+
+// ===== AÇÕES =====
+function updateField(i, key, val) {
+  items[i][key] = val;
+  // Re-render só o card de vídeo para atualizar preview
+  if (key === 'src') {
+    const grid = document.getElementById('gallery-grid');
+    grid.children[i].replaceWith(makeCard(items[i], i));
+  }
+  updateStats();
+  updateStatus();
+}
+
+function changeKind(i, kind) {
+  items[i].kind = kind;
+  if (kind === 'video') {
+    items[i].src = items[i].src || '';
+    delete items[i].variant;
+  } else {
+    items[i].variant = items[i].variant || 'mae';
+    delete items[i].src;
+  }
+  renderAll();
+}
+
+function removeItem(i) {
+  if (!confirm(`Remover o item "${items[i].title}"?`)) return;
+  items.splice(i, 1);
+  renderAll();
+}
+
+function moveUp(i) {
+  if (i === 0) return;
+  [items[i-1], items[i]] = [items[i], items[i-1]];
+  renderAll();
+}
+
+function moveDown(i) {
+  if (i >= items.length-1) return;
+  [items[i], items[i+1]] = [items[i+1], items[i]];
+  renderAll();
+}
+
+function addItem() {
+  items.push({ kind: 'photo', variant: 'mae', tag: 'Nova Caneca', title: 'Novo modelo' });
+  renderAll();
+  // scroll até o novo card
+  setTimeout(() => {
+    const grid = document.getElementById('gallery-grid');
+    grid.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 100);
+}
+
+function saveAll() {
+  try {
+    localStorage.setItem('lt_gallery_items', JSON.stringify(items));
+    showToast('✅ Galeria salva! Recarregue a landing page para ver as mudanças.');
+  } catch(e) {
+    showToast('❌ Erro ao salvar: ' + e.message);
+  }
+}
+
+function resetToDefault() {
+  if (!confirm('Isso vai resetar todos os itens para o padrão original. Continuar?')) return;
+  items = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+  localStorage.removeItem('lt_gallery_items');
+  renderAll();
+  showToast('🔄 Galeria resetada para o padrão!');
+}
+
+// ===== UI HELPERS =====
+function updateStats() {
+  const videos = items.filter(i => i.kind === 'video').length;
+  document.getElementById('stat-total').textContent = items.length;
+  document.getElementById('stat-videos').textContent = videos;
+  document.getElementById('stat-photos').textContent = items.length - videos;
+}
+
+function updateStatus() {
+  document.getElementById('status-text').innerHTML =
+    `<strong>${items.length} itens</strong> na galeria &mdash; alterações não salvas`;
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 4000);
+  document.getElementById('status-text').innerHTML =
+    `<strong>${items.length} itens</strong> &mdash; <span style="color:#16a34a">✓ Salvo com sucesso!</span>`;
+}
+
+function escHtml(str) {
+  return (str || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ===== INIT =====
+load();
+</script>
+</body>
+</html>
