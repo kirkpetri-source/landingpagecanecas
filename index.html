@@ -1632,9 +1632,9 @@ function Hero({ wppLink }) {
                     const url = cfg.imageUrl;
                     const isVideo = cfg.mediaType === 'video' || /\.(mp4|webm|mov|ogg)(\?|$)/i.test(url);
                     if (isVideo) {
-                      return <video src={url} autoPlay muted loop playsInline style={{ width:'100%', height:'auto', borderRadius:12, display:'block' }} />;
+                      return <video src={url} autoPlay muted loop playsInline style={{ width:'100%', height:'auto', borderRadius:12, display:'block', mixBlendMode: 'multiply' }} />;
                     }
-                    return <img src={url} alt="Caneca personalizada" style={{ width:'100%', height:'auto', borderRadius:12, display:'block' }} />;
+                    return <img src={url} alt="Caneca personalizada" style={{ width:'100%', height:'auto', borderRadius:12, display:'block', mixBlendMode: 'multiply' }} />;
                   }
                 } catch(_) {}
                 return <HeroMugIllustration />;
